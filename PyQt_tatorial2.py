@@ -9,9 +9,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Hello World")
         #create stacked layout
-        self.create_initial_layout()
-        #create the two layouts we need
         self.stacked_layout = QStackedLayout()
+        #create the two layouts we need
         self.create_initial_layout()
         self.create_hello_layout()
         #set initial layout
@@ -23,20 +22,23 @@ class MainWindow(QMainWindow):
 
     def create_initial_layout(self):
         self.text_box = QLineEdit()
-        self.button = QPushButton("Submit")
+        self.submit_button = QPushButton("Submit")
 
         self.layout = QVBoxLayout()
         
         self.layout.addWidget(self.text_box)
-        self.layout.addWidget(self.button)       
+        self.layout.addWidget(self.submit_button)       
 
         self.initial_widget = QWidget()
         self.initial_widget.setLayout(self.layout)
         #add to stacked layout
         self.stacked_layout.addWidget(self.initial_widget)
 
+        #connection
+        self.submit_button.clicked.connect(self.switch_to_hello_layout)
+
     def create_hello_layout(self):
-        self.text_box = QLineEdit()
+        self.label = QLabel()
         self.back_button = QPushButton("Back")
 
         self.layout = QVBoxLayout()
@@ -49,9 +51,20 @@ class MainWindow(QMainWindow):
         
         self.stacked_layout.addWidget(self.hello_widget)
 
-    def display_name(self):
+        self.back_button.clicked.connect(self.switch_to_initial_layout)        
+
+    def switch_to_hello_layout(self):
+        self.stacked_layout.setCurrentIndex(1)
         name = self.text_box.text()
-        self.text_box.setText("Hello {0}".format(name))
+        if name == "":
+            self.label.setText("Please go back and enter in your name")
+        else:
+            self.label.setText("Hello {0}".format(name))
+
+    def switch_to_initial_layout(self):
+        self.stacked_layout.setCurrentIndex(0)
+        self.text_box.clear()
+
 
 if __name__ == "__main__":
     application = QApplication(sys.argv)
